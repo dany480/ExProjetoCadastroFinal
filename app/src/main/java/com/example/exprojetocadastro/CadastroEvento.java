@@ -1,11 +1,14 @@
 package com.example.exprojetocadastro;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.exprojetocadastro.modelo.Evento;
 
@@ -14,7 +17,7 @@ import java.util.Date;
 public class CadastroEvento extends AppCompatActivity {
 
     private final int RESULT_CODE_NOVO_EVENTO = 10;
-    private final int RESULT_CODE_EVENTO_EDITADO = 11;
+    private final int RESULT_CODE_EDIT_EVENTO = 11;
 
     private boolean triagem = false;
 
@@ -33,7 +36,8 @@ public class CadastroEvento extends AppCompatActivity {
     private void carregarEvento(){
 
         Intent intent = getIntent();
-        if (intent != null && intent.getExtras() != null && intent.getExtras().get("eventoEdicao")!=null){
+        if (intent != null && intent.getExtras() != null &&
+                intent.getExtras().get("eventoEdicao")!=null){
 
             Evento evento = (Evento) intent.getExtras().get("eventoEdicao");
             EditText edtNome = findViewById(R.id.edtNome);
@@ -50,9 +54,15 @@ public class CadastroEvento extends AppCompatActivity {
 
     }
 
+    private boolean isCampoVazio (String v){
+        boolean resultado = (TextUtils.isEmpty(v) || v.trim().isEmpty());
+        return resultado;
+    }
+
     public void onClickVoltar(View v){finish();}
 
     public void onClickSalvar(View v){
+        boolean mesagem = false;
 
         EditText edtNome = findViewById(R.id.edtNome);
         EditText edtData = findViewById(R.id.edtData);
@@ -65,15 +75,29 @@ public class CadastroEvento extends AppCompatActivity {
         Evento evento = new Evento(id,nome,data,local);
         Intent intent = new Intent();
 
+
+        if (isCampoVazio(nome) || isCampoVazio(data) || isCampoVazio(local)) {
+            edtNome.requestFocus();
+            AlertDialog.Builder msg = new AlertDialog.Builder(this);
+            msg.setTitle("Aviso");
+            msg.setMessage("Há campos inválidos ou em branco");
+            msg.setNeutralButton("Ok", null);
+            msg.show();
+
+        }
         if (triagem){
-            intent.putExtra("eventoEditado",evento);
-            setResult(RESULT_CODE_EVENTO_EDITADO, intent);
+
+            intent.putExtra("eventoEditado", evento);
+            setResult(RESULT_CODE_EDIT_EVENTO, intent);
+
         }
         else{
-            intent.putExtra("novoEvento",evento);
+            intent.putExtra("novoEvento", evento);
             setResult(RESULT_CODE_NOVO_EVENTO, intent);
+
         }
         finish();
     }
+
 
 }
