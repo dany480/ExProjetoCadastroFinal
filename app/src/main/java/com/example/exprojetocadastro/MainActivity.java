@@ -64,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
     public void onClickNovoEvento (View v){
         Intent intent = new Intent(MainActivity.this, CadastroEvento.class);
         startActivityForResult(intent, REQUEST_CODE_NOVO_EVENTO);
-
     }
 
     @Override
