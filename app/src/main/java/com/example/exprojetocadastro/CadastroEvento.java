@@ -19,6 +19,7 @@ public class CadastroEvento extends AppCompatActivity {
     private final int RESULT_CODE_NOVO_EVENTO = 10;
     private final int RESULT_CODE_EDIT_EVENTO = 11;
 
+
     private boolean triagem = false;
 
     private  int id = 0;
@@ -59,10 +60,31 @@ public class CadastroEvento extends AppCompatActivity {
         return resultado;
     }
 
+    public void onClickExcluir(View v) {
+
+        Evento evento = new Evento(id,"Cancelado!","","");
+        Intent intent = new Intent();
+
+        intent.putExtra("eventoEditado", evento);
+        setResult(RESULT_CODE_EDIT_EVENTO, intent);
+
+        EditText editTextNome = findViewById(R.id.edtNome);
+        EditText editTextData = findViewById(R.id.edtData);
+        EditText editTextLocal = findViewById(R.id.edtLocal);
+
+        editTextData.setText(" ");
+        editTextNome.setText(" ");
+        editTextLocal.setText(" ");
+
+
+        finish();
+    }
+
+
     public void onClickVoltar(View v){finish();}
 
     public void onClickSalvar(View v){
-        boolean mesagem = false;
+
 
         EditText edtNome = findViewById(R.id.edtNome);
         EditText edtData = findViewById(R.id.edtData);
@@ -76,15 +98,7 @@ public class CadastroEvento extends AppCompatActivity {
         Intent intent = new Intent();
 
 
-        if (isCampoVazio(nome) || isCampoVazio(data) || isCampoVazio(local)) {
-            edtNome.requestFocus();
-            AlertDialog.Builder msg = new AlertDialog.Builder(this);
-            msg.setTitle("Aviso");
-            msg.setMessage("Há campos inválidos ou em branco");
-            msg.setNeutralButton("Ok", null);
-            msg.show();
 
-        }
         if (triagem){
 
             intent.putExtra("eventoEditado", evento);
@@ -96,8 +110,19 @@ public class CadastroEvento extends AppCompatActivity {
             setResult(RESULT_CODE_NOVO_EVENTO, intent);
 
         }
+
+        if (isCampoVazio(nome) || isCampoVazio(data) || isCampoVazio(local)) {
+            edtNome.requestFocus();
+            AlertDialog.Builder msg = new AlertDialog.Builder(this);
+            msg.setTitle("Aviso");
+            msg.setMessage("Há campos inválidos ou em branco");
+            msg.setNeutralButton("Ok", null);
+            msg.show();
+
+        }else {
+
         finish();
     }
 
-
+    }
 }

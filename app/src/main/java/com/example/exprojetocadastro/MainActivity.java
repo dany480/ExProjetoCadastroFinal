@@ -19,9 +19,12 @@ public class MainActivity extends AppCompatActivity {
 
     private final int REQUEST_CODE_NOVO_EVENTO = 1;
     private final int REQUEST_CODE_EDIT_EVENTO = 2;
+    private final int REQUEST_CODE_EXCLUIR_EVENTO=3;
+
 
     private final int RESULT_CODE_NOVO_EVENTO = 10;
     private final int RESULT_CODE_EDIT_EVENTO = 11;
+    private final int RESULT_CODE_EXCLUIR_EVENTO =12;
 
     private int id = 0;
 
@@ -88,11 +91,11 @@ public class MainActivity extends AppCompatActivity {
                     aEvento.remove(evento);
                     aEvento.insert(eventoEdt,i);
                     break;
+
                 }
 
             }
         }
-
         super.onActivityResult(requestCode, resultCode, data);
     }
 }
