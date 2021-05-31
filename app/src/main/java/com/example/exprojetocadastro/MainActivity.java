@@ -3,6 +3,7 @@ package com.example.exprojetocadastro;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -10,21 +11,18 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.example.exprojetocadastro.database.EventoDAO;
+import com.example.exprojetocadastro.database.contract.EventoContract;
+import com.example.exprojetocadastro.database.entity.EventoEntity;
 import com.example.exprojetocadastro.modelo.Evento;
 
 import java.util.ArrayList;
 
+import static java.lang.Integer.parseInt;
+
 public class MainActivity extends AppCompatActivity {
-
-    private final int REQUEST_CODE_NOVO_EVENTO = 1;
-    private final int REQUEST_CODE_EDIT_EVENTO = 2;
-    private final int REQUEST_CODE_EXCLUIR_EVENTO=3;
-
-
-    private final int RESULT_CODE_NOVO_EVENTO = 10;
-    private final int RESULT_CODE_EDIT_EVENTO = 11;
-    private final int RESULT_CODE_EXCLUIR_EVENTO =12;
 
     private int id = 0;
 
@@ -42,10 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
         ArrayList <Evento> eventos = new ArrayList<Evento>();
 
-        aEvento = new ArrayAdapter<Evento>(MainActivity.this,
-                android.R.layout.simple_list_item_1, eventos);
 
-        listViewEventos.setAdapter(aEvento);
         registerForContextMenu(listViewEventos);
 
         definirOnClickListenerListView();
@@ -59,43 +54,39 @@ public class MainActivity extends AppCompatActivity {
                 Evento eventoClicado = aEvento.getItem(position);
                 Intent intent = new Intent(MainActivity.this, CadastroEvento.class);
                 intent.putExtra("eventoEdicao",eventoClicado);
-                startActivityForResult(intent,REQUEST_CODE_EDIT_EVENTO);
+                startActivity(intent);
+            }
+        });
+        listViewEventos.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+               EventoDAO evtEx = new EventoDAO(getBaseContext());
+//                Evento eventoExcluir = aEvento.getItem(position);
+                aEvento = new ArrayAdapter<Evento>(MainActivity.this,
+                        android.R.layout.simple_list_item_1,evtEx.deletar());
+
+                listViewEventos.setAdapter(aEvento);
+                Toast.makeText(MainActivity.this, "Evento excluido",Toast.LENGTH_LONG).show();
+                return false;
             }
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        EventoDAO eventoDAO = new EventoDAO(getBaseContext());
+        aEvento = new ArrayAdapter<Evento>(MainActivity.this,
+                android.R.layout.simple_list_item_1,
+                eventoDAO.relacionar());
+
+        listViewEventos.setAdapter(aEvento);
+
+    }
+
     public void onClickNovoEvento (View v){
         Intent intent = new Intent(MainActivity.this, CadastroEvento.class);
-        startActivityForResult(intent, REQUEST_CODE_NOVO_EVENTO);
+        startActivity(intent);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-
-        if (requestCode == REQUEST_CODE_NOVO_EVENTO &&
-                resultCode == RESULT_CODE_NOVO_EVENTO){
-
-            Evento evento = (Evento) data.getExtras().getSerializable("novoEvento");
-            evento.setId(++id);
-            this.aEvento.add(evento);
-        }
-
-        else if(requestCode == REQUEST_CODE_EDIT_EVENTO &&
-                resultCode == RESULT_CODE_EDIT_EVENTO){
-
-            Evento eventoEdt = (Evento) data.getExtras().getSerializable("eventoEditado");
-            for (int i = 0; i < aEvento.getCount(); i++){
-
-                Evento evento = aEvento.getItem(i);
-                if(evento.getId() == eventoEdt.getId()){
-                    aEvento.remove(evento);
-                    aEvento.insert(eventoEdt,i);
-                    break;
-
-                }
-
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
 }

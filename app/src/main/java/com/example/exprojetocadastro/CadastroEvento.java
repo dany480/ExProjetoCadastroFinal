@@ -10,17 +10,12 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.exprojetocadastro.database.EventoDAO;
 import com.example.exprojetocadastro.modelo.Evento;
 
 import java.util.Date;
 
 public class CadastroEvento extends AppCompatActivity {
-
-    private final int RESULT_CODE_NOVO_EVENTO = 10;
-    private final int RESULT_CODE_EDIT_EVENTO = 11;
-
-
-    private boolean triagem = false;
 
     private  int id = 0;
 
@@ -49,7 +44,7 @@ public class CadastroEvento extends AppCompatActivity {
             edtData.setText(evento.getData());
             edtLocal.setText(evento.getLocal());
 
-            triagem = true;
+
             id = evento.getId();
         }
 
@@ -60,25 +55,25 @@ public class CadastroEvento extends AppCompatActivity {
         return resultado;
     }
 
-    public void onClickExcluir(View v) {
-
-        Evento evento = new Evento(id,"Cancelado!","","");
-        Intent intent = new Intent();
-
-        intent.putExtra("eventoEditado", evento);
-        setResult(RESULT_CODE_EDIT_EVENTO, intent);
-
-        EditText editTextNome = findViewById(R.id.edtNome);
-        EditText editTextData = findViewById(R.id.edtData);
-        EditText editTextLocal = findViewById(R.id.edtLocal);
-
-        editTextData.setText(" ");
-        editTextNome.setText(" ");
-        editTextLocal.setText(" ");
-
-
-        finish();
-    }
+//    public void onClickExcluir(View v) {
+//
+//        Evento evento = new Evento(id,"Cancelado!","","");
+//        Intent intent = new Intent();
+//
+//        intent.putExtra("eventoEditado", evento);
+//        setResult(RESULT_CODE_EDIT_EVENTO, intent);
+//
+//        EditText editTextNome = findViewById(R.id.edtNome);
+//        EditText editTextData = findViewById(R.id.edtData);
+//        EditText editTextLocal = findViewById(R.id.edtLocal);
+//
+//        editTextData.setText(" ");
+//        editTextNome.setText(" ");
+//        editTextLocal.setText(" ");
+//
+//
+//        finish();
+//    }
 
 
     public void onClickVoltar(View v){finish();}
@@ -95,34 +90,31 @@ public class CadastroEvento extends AppCompatActivity {
         String local = edtLocal.getText().toString();
 
         Evento evento = new Evento(id,nome,data,local);
-        Intent intent = new Intent();
 
+        EventoDAO eventoDAO = new EventoDAO(getBaseContext());
+        boolean salvo = eventoDAO.salvar(evento);
 
+//        if (isCampoVazio(nome) || isCampoVazio(data) || isCampoVazio(local)) {
+//            edtNome.requestFocus();
+//            AlertDialog.Builder msg = new AlertDialog.Builder(this);
+//            msg.setTitle("Aviso");
+//            msg.setMessage("Há campos inválidos ou em branco");
+//            msg.setNeutralButton("Ok", null);
+//            msg.show();
+//
+//        }else {
+//
+//            finish();
+//        }
 
-        if (triagem){
-
-            intent.putExtra("eventoEditado", evento);
-            setResult(RESULT_CODE_EDIT_EVENTO, intent);
-
+        if (salvo){
+            finish();
         }
-        else{
-            intent.putExtra("novoEvento", evento);
-            setResult(RESULT_CODE_NOVO_EVENTO, intent);
-
+        else {
+            Toast.makeText(CadastroEvento.this,"Erro ao executar!",Toast.LENGTH_LONG).show();
         }
 
-        if (isCampoVazio(nome) || isCampoVazio(data) || isCampoVazio(local)) {
-            edtNome.requestFocus();
-            AlertDialog.Builder msg = new AlertDialog.Builder(this);
-            msg.setTitle("Aviso");
-            msg.setMessage("Há campos inválidos ou em branco");
-            msg.setNeutralButton("Ok", null);
-            msg.show();
 
-        }else {
-
-        finish();
-    }
 
     }
 }
