@@ -55,25 +55,29 @@ public class CadastroEvento extends AppCompatActivity {
         return resultado;
     }
 
-//    public void onClickExcluir(View v) {
-//
-//        Evento evento = new Evento(id,"Cancelado!","","");
-//        Intent intent = new Intent();
-//
-//        intent.putExtra("eventoEditado", evento);
-//        setResult(RESULT_CODE_EDIT_EVENTO, intent);
-//
-//        EditText editTextNome = findViewById(R.id.edtNome);
-//        EditText editTextData = findViewById(R.id.edtData);
-//        EditText editTextLocal = findViewById(R.id.edtLocal);
-//
-//        editTextData.setText(" ");
-//        editTextNome.setText(" ");
-//        editTextLocal.setText(" ");
-//
-//
-//        finish();
-//    }
+    public void onClickExcluir(View v) {
+
+        EditText editTextNome = findViewById(R.id.edtNome);
+        EditText editTextData = findViewById(R.id.edtData);
+        EditText editTextLocal = findViewById(R.id.edtLocal);
+
+        String nome = editTextNome.getText().toString();
+        String data = editTextData.getText().toString();
+        String local = editTextLocal.getText().toString();
+
+        Evento evento = new Evento(id,nome,data,local);
+        EventoDAO eventoDAO = new EventoDAO(getBaseContext());
+
+        boolean ex = eventoDAO.deletar(evento);
+
+        if (ex){
+            finish();
+        }
+        else{
+            Toast.makeText(CadastroEvento.this,"Erro na exclusão!",
+                    Toast.LENGTH_LONG).show();
+        }
+    }
 
 
     public void onClickVoltar(View v){finish();}
@@ -92,20 +96,8 @@ public class CadastroEvento extends AppCompatActivity {
         Evento evento = new Evento(id,nome,data,local);
 
         EventoDAO eventoDAO = new EventoDAO(getBaseContext());
-        boolean salvo = eventoDAO.salvar(evento);
 
-//        if (isCampoVazio(nome) || isCampoVazio(data) || isCampoVazio(local)) {
-//            edtNome.requestFocus();
-//            AlertDialog.Builder msg = new AlertDialog.Builder(this);
-//            msg.setTitle("Aviso");
-//            msg.setMessage("Há campos inválidos ou em branco");
-//            msg.setNeutralButton("Ok", null);
-//            msg.show();
-//
-//        }else {
-//
-//            finish();
-//        }
+        boolean salvo = eventoDAO.salvar(evento);
 
         if (salvo){
             finish();
@@ -113,8 +105,5 @@ public class CadastroEvento extends AppCompatActivity {
         else {
             Toast.makeText(CadastroEvento.this,"Erro ao executar!",Toast.LENGTH_LONG).show();
         }
-
-
-
     }
 }

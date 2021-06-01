@@ -57,19 +57,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        listViewEventos.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-               EventoDAO evtEx = new EventoDAO(getBaseContext());
-//                Evento eventoExcluir = aEvento.getItem(position);
-                aEvento = new ArrayAdapter<Evento>(MainActivity.this,
-                        android.R.layout.simple_list_item_1,evtEx.deletar());
-
-                listViewEventos.setAdapter(aEvento);
-                Toast.makeText(MainActivity.this, "Evento excluido",Toast.LENGTH_LONG).show();
-                return false;
-            }
-        });
     }
 
     @Override

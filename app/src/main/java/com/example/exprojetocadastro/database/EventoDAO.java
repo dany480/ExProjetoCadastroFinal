@@ -13,8 +13,6 @@ import java.util.List;
 public class EventoDAO {
 
     private final String SQL_SELECIONAR = " SELECT * FROM " + EventoEntity.TABLE_NAME;
-    private final String SQL_DELETAR = " DELETE FROM " + EventoEntity.TABLE_NAME +
-            " WHERE " + EventoEntity._ID;
     private DbGateway dbGateway;
 
     public EventoDAO(Context context){
@@ -53,20 +51,21 @@ public class EventoDAO {
         return eventos;
     }
 
-    public List<Evento> deletar (){
-        List<Evento> exEv = new ArrayList<>();
-        Cursor cursor = dbGateway.getDatabase().rawQuery(SQL_DELETAR,null);
+    public boolean deletar (Evento evento){
 
-        while (cursor.moveToNext()){
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(EventoEntity.COLUMN_NAME_NOME, evento.getNome());
+        contentValues.put(EventoEntity.COLUMN_NAME_DATA, evento.getData());
+        contentValues.put(EventoEntity.COLUMN_NAME_LOCAL, evento.getLocal());
 
-            int id = cursor.getInt(cursor.getColumnIndex(EventoEntity._ID));
-            String nome = cursor.getString(cursor.getColumnIndex(EventoEntity.COLUMN_NAME_NOME));
-            String data = cursor.getString(cursor.getColumnIndex(EventoEntity.COLUMN_NAME_DATA));
-            String local = cursor.getString(cursor.getColumnIndex(EventoEntity.COLUMN_NAME_LOCAL));
-            exEv.remove(new Evento(id,nome,data,local));
+        if (evento.getId() > 0){
 
+            return dbGateway.getDatabase().delete(EventoEntity.TABLE_NAME,
+                    EventoEntity._ID + "=?",
+                    new String[]{String.valueOf(evento.getId())}) > 0 ;
         }
-        cursor.close();
-        return exEv;
+        return dbGateway.getDatabase().replace(EventoEntity.TABLE_NAME,
+                null,contentValues) > 0;
     }
+
 }

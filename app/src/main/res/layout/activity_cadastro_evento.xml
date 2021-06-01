@@ -60,4 +60,11 @@
         android:onClick="onClickVoltar"
         android:text="Voltar" />
 
+    <Button
+        android:id="@+id/btnExcluir"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onClickExcluir"
+        android:text="Excluir" />
+
 </LinearLayout>
